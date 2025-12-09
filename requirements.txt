@@ -4,3 +4,4 @@ docxtpl
 python-dateutil
 Pillow
 docx2pdf
+gunicorn
