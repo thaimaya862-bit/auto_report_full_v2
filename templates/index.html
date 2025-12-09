@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>ระบบสร้างบันทึกอัตโนมัติ  by bo</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; max-width: 800px; margin: 20px auto; }
+    fieldset { margin-bottom: 20px; }
+    label { display: block; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>ระบบสร้างบันทึกคดีเสพอัตโนมัติ พร้อมส่งปัสสาวะ รพ. (Word + PDF) กรณีจับในห้องควบคุมต่อจากสายตรวจเท่านั้น</h1>
+  <form method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>1. วันที่และเวลา</legend>
+      <label>วันที่เอกสาร:
+        <input type="date" name="doc_date" required>
+      </label>
+      <label>เวลาเริ่ม (เช่น 12:00):
+        <input type="time" name="time_start" required>
+      </label>
+      <p>ระบบจะคำนวณเวลาอีกจุดให้เอง (+ 1 ชั่วโมง 15 นาที)</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>2. เลือกชุดเจ้าหน้าที่</legend>
+      <label>ชุดเจ้าหน้าที่:
+        <select name="team_id" required>
+          <option value="">-- เลือกชุด --</option>
+          {% for key, t in teams.items() %}
+          <option value="{{ key }}">{{ t.name }} ({{ t.leader }})</option>
+          {% endfor %}
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>3. อัปโหลดทะเบียนราษฎร ของ Crimes เท่านั้น ไม่รองรับของ Naga (PDF)</legend>
+      <label>ไฟล์ทะเบียนราษฎร (PDF):
+        <input type="file" name="pdf_register" accept="application/pdf" required>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>4. อัปโหลดรูปภาพ 4 รูป (ถ่ายผู้ถูกจับ 4 มุม)</legend>
+      <label>รูปที่ 1: หน้า <input type="file" name="photo1" accept="image/*" required></label>
+      <label>รูปที่ 2: หลัง <input type="file" name="photo2" accept="image/*" required></label>
+      <label>รูปที่ 3: ซ้าย <input type="file" name="photo3" accept="image/*" required></label>
+      <label>รูปที่ 4: ขวา <input type="file" name="photo4" accept="image/*" required></label>
+      <p>อัตราส่วนภาพ 4 มุม ควรเป็น 4 : 3 เพื่อไม่ให้ภาพล้นออกนะจ้ะ !!</p>
+    </fieldset>
+
+    <button type="submit">สร้างเอกสาร</button>
+  </form>
+
+  {% if docx_filename %}
+  <hr>
+  <h2>สร้างเอกสารสำเร็จ</h2>
+  <p>
+    ➤ <a href="{{ url_for('download_file', filename=docx_filename) }}">ดาวน์โหลดไฟล์ Word</a>
+  </p>
+  {% if pdf_filename %}
+  <p>
+    ➤ <a href="{{ url_for('download_file', filename=pdf_filename) }}">ดาวน์โหลดไฟล์ PDF</a>
+  </p>
+  {% else %}
+  <p><em>ไม่สามารถสร้าง PDF ได้ (อาจไม่มี Microsoft Word ในเครื่อง) แต่ไฟล์ Word พร้อมใช้งานแล้ว</em></p>
+  {% endif %}
+  {% endif %}
+</body>
+</html>

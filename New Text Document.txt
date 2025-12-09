@@ -1,0 +1,3 @@
+cd C:\auto_report_full_v2
+pip install -r requirements.txt
+python app.py
